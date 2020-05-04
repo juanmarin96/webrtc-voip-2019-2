@@ -1,8 +1,9 @@
 var socket = new JsSIP.WebSocketInterface('wss://192.168.1.7:8089/ws');
+
 var configuration = {
   sockets  : [ socket ],
-  uri      : 'sip:1060@192.168.1.7:5060',
-  password : 'marin1234'
+  uri      : 'sip:webrtc_client@192.168.1.7:5060',
+  password : 'webrtc_client'
 };
 
 var coolPhone = new JsSIP.UA(configuration);
@@ -29,6 +30,11 @@ coolPhone.on('registrationFailed', function(e){
 });
 
 
+coolPhone.on('newMessage', function(e){
+    console.log("Llego esto") 
+    console.log(e)
+});
+
 
 // Register callbacks to desired call events
 var eventHandlers = {
@@ -51,7 +57,8 @@ var eventHandlers = {
     'eventHandlers'    : eventHandlers,
     'mediaConstraints' : { 'audio': true, 'video': false }
   };
+  
 
   var text = 'Hello Bob!';
 
-  coolPhone.sendMessage('sip:1061@192.168.1.7:5060', text);
+  coolPhone.sendMessage('sip:webrtc_client@192.168.1.7:5060', text);
