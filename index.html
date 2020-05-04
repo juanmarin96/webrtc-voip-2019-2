@@ -44,8 +44,8 @@
   </div>
  
   <div style="width: 424px; height: 324px;background-color: #333333; border: 2px solid blue; padding:0px; margin-top: 4px;">
-        <video id="videoView" width="420px" height="320px" autoplay ></video>
-        <video id="remoteView" width="420px" height="320px" ></video>
+        <video id="videoView" width="420px" height="320px" autoplay muted></video>
+        <video id="remoteView" width="420px" height="320px" autoplay></video>
   </div>
  
 </body>
@@ -120,7 +120,7 @@
           console.info("incomingSession, answer the call");
           incomingSession = data.session;
           data.session.answer({'mediaConstraints' : { 'audio': true, 'video': true, mandatory: { maxWidth: 640, maxHeight: 360 } }, 'mediaStream': localStream});
-        }else{
+          }else{
           console.info("outgoingSession");
           outgoingSession = data.session;
           outgoingSession.on('connecting', function(data){
@@ -142,6 +142,11 @@
             if(data.originator == 'remote' && currentSession == null){
               currentSession = incomingSession;
               incomingSession = null;
+              console.log(currentSession)
+              currentSession.connection.ontrack = function(ev){
+                console.info('onaddstream from remote - ', ev);
+                remoteView.srcObject = ev.streams[0];
+            };
               console.info("setCurrentSession - ", currentSession);
             }          
           });
@@ -159,8 +164,8 @@
         data.session.on('peerconnection', function(data){
           console.info('onPeerconnection - ', data.peerconnection);
           data.peerconnection.ontrack = function(ev){
-              console.info('onaddstream from remote - ', ev);
-              videoView.srcObject = ev.streams[0];
+            console.info('onaddstream from remote - ', ev);
+            remoteView.srcObject = ev.streams[0];
           };
         });
       });
